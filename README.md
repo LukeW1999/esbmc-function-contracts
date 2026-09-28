@@ -77,6 +77,3 @@ derive from upstream projects and keep their own terms and their file headers:
 - `benchmarks/freertos/` from the FreeRTOS kernel. `heap_1` is self-contained:
   `freertos_stubs.h` stands in for `FreeRTOS.h` and `task.h`, so no kernel
   checkout is needed.
-
-ESBMC has its own licensing, which is not simple: several solvers it links
-against carry non-commercial clauses. See `COPYING` in the ESBMC repository.
