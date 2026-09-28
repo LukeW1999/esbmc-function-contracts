@@ -1,0 +1,178 @@
+================================================================
+  Experiment 3: X.509 Contract Propagation Comparison - ESBMC vs CBMC
+================================================================
+
+=== Tool Versions ===
+ESBMC: ESBMC version 8.5.0 64-bit x86_64 linux
+CBMC:  6.8.0 (cbmc-6.8.0)
+
+================================================================
+                        ESBMC Tests
+================================================================
+
+--- Scenario A: Direct verification (no contracts) ---
+Command: esbmc x509_esbmc.c --unwind 5
+Result: VERIFICATION SUCCESSFUL
+Time: 127ms
+
+--- Scenario B: Replace leaf functions only ---
+Command: esbmc x509_esbmc.c --replace-call-with-contract "parse_id_len,parse_x509_cert" --unwind 5
+Result: VERIFICATION SUCCESSFUL
+Time: 140ms
+
+--- Scenario C: Replace all functions (using *) ---
+Command: esbmc x509_esbmc.c --replace-call-with-contract "*" --unwind 5
+Result: VERIFICATION SUCCESSFUL
+Time: 127ms
+
+--- Scenario D: Layered verification ---
+Step 1: enforce leaf function parse_id_len
+  parse_id_len enforce: PASS (138ms)
+Step 2: enforce leaf function parse_x509_cert
+  parse_x509_cert enforce: PASS (121ms)
+Step 3: replace leaves + enforce parent function parse_x509_cert_relaxed
+  parse_x509_cert_relaxed enforce+replace: PASS (158ms)
+Step 4: replace all verified functions, verify main
+  main with all replaced: PASS (126ms)
+
+================================================================
+                        CBMC Tests
+================================================================
+
+--- Scenario A: Direct verification (no contracts) ---
+Compile: goto-cc x509_cbmc.c -o x509.goto
+Command: cbmc x509.goto --unwind 5
+Result: VERIFICATION SUCCESSFUL
+Time: 21ms
+
+--- Scenario B: Replace leaf functions only ---
+Reading GOTO program from 'x509.goto'
+Function Pointer Removal
+Virtual function removal
+Cleaning inline assembler statements
+Trying to force one backedge per target
+Replacing function calls with contracts
+Writing GOTO program to 't1.goto'
+Reading GOTO program from 't1.goto'
+Function Pointer Removal
+Virtual function removal
+Cleaning inline assembler statements
+Trying to force one backedge per target
+Replacing function calls with contracts
+Writing GOTO program to 't2.goto'
+Command: cbmc t2.goto --unwind 5
+Result: VERIFICATION SUCCESSFUL
+Time: 24ms
+
+--- Scenario C: Replace all functions (including parent) ---
+Reading GOTO program from 'x509.goto'
+Function Pointer Removal
+Virtual function removal
+Cleaning inline assembler statements
+Trying to force one backedge per target
+Replacing function calls with contracts
+Writing GOTO program to 'c1.goto'
+Reading GOTO program from 'c1.goto'
+Function Pointer Removal
+Virtual function removal
+Cleaning inline assembler statements
+Trying to force one backedge per target
+Replacing function calls with contracts
+Writing GOTO program to 'c2.goto'
+Reading GOTO program from 'c2.goto'
+Function Pointer Removal
+Virtual function removal
+Cleaning inline assembler statements
+Trying to force one backedge per target
+Replacing function calls with contracts
+Writing GOTO program to 'c3.goto'
+Command: cbmc c3.goto --unwind 5
+Result: VERIFICATION SUCCESSFUL
+Time: 21ms
+
+--- Scenario D: Layered propagation verification ---
+Step 1: enforce leaf function parse_id_len
+Reading GOTO program from 'x509.goto'
+Function Pointer Removal
+Virtual function removal
+Cleaning inline assembler statements
+Trying to force one backedge per target
+Enforcing contracts
+Adding nondeterministic initialization of static/global variables.
+Writing GOTO program to 'd1_e.goto'
+  parse_id_len enforce: PASS (40ms)
+Step 2: enforce leaf function parse_x509_cert
+Reading GOTO program from 'x509.goto'
+Function Pointer Removal
+Virtual function removal
+Cleaning inline assembler statements
+Trying to force one backedge per target
+Enforcing contracts
+Adding nondeterministic initialization of static/global variables.
+Writing GOTO program to 'd2_e.goto'
+  parse_x509_cert enforce: PASS (18ms)
+Step 3: replace leaves + enforce parent function parse_x509_cert_relaxed
+Reading GOTO program from 'x509.goto'
+Function Pointer Removal
+Virtual function removal
+Cleaning inline assembler statements
+Trying to force one backedge per target
+Replacing function calls with contracts
+Writing GOTO program to 'd3_1.goto'
+Reading GOTO program from 'd3_1.goto'
+Function Pointer Removal
+Virtual function removal
+Cleaning inline assembler statements
+Trying to force one backedge per target
+Replacing function calls with contracts
+Writing GOTO program to 'd3_2.goto'
+Reading GOTO program from 'd3_2.goto'
+Function Pointer Removal
+Virtual function removal
+Cleaning inline assembler statements
+Trying to force one backedge per target
+Enforcing contracts
+Adding nondeterministic initialization of static/global variables.
+Writing GOTO program to 'd3_3.goto'
+  parse_x509_cert_relaxed enforce+replace: PASS (44ms)
+Step 4: replace all verified functions, verify main
+Reading GOTO program from 'x509.goto'
+Function Pointer Removal
+Virtual function removal
+Cleaning inline assembler statements
+Trying to force one backedge per target
+Replacing function calls with contracts
+Writing GOTO program to 'd4_1.goto'
+Reading GOTO program from 'd4_1.goto'
+Function Pointer Removal
+Virtual function removal
+Cleaning inline assembler statements
+Trying to force one backedge per target
+Replacing function calls with contracts
+Writing GOTO program to 'd4_2.goto'
+Reading GOTO program from 'd4_2.goto'
+Function Pointer Removal
+Virtual function removal
+Cleaning inline assembler statements
+Trying to force one backedge per target
+Replacing function calls with contracts
+Writing GOTO program to 'd4_3.goto'
+  main with all replaced: PASS (21ms)
+
+================================================================
+                      Results Summary
+================================================================
+
+Scenario                                      | ESBMC        | CBMC        
+----------------------------------------------+--------------+-------------
+A. Direct verification (no contracts)         | PASS         | PASS        
+B. Replace leaf functions only                | PASS         | PASS        
+C. Replace all functions (incl. parent)       | PASS         | PASS        
+D1. enforce parse_id_len                      | PASS         | PASS        
+D2. enforce parse_x509_cert                   | PASS         | PASS        
+D3. replace leaves + enforce parent           | PASS         | PASS        
+D4. replace all + verify main                 | PASS         | PASS        
+
+================================================================
+Log files located at /tmp/esbmc_*.log and /tmp/cbmc_*.log
+================================================================

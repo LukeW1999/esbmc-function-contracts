@@ -1,0 +1,7 @@
+Negative controls at N=16, K=3 (every line must read FAIL):
+  Enforce: leaf bound >=0 -> >=1           FAIL  ok
+  Replace: caller goal >=0 -> >=1          FAIL  ok
+  Replace: leaf stub weakened              FAIL  ok
+  Direct: caller goal >=0 -> >=1           FAIL  ok
+
+All four controls fired.

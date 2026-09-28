@@ -1,0 +1,3 @@
+*.goto
+__pycache__/
+*.pyc

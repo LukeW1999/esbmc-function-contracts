@@ -1,0 +1,42 @@
+================================================================
+  SV-COMP Contract Benchmark: Direct vs Modular Verification
+  ESBMC: /root/esbmc/build/src/esbmc/esbmc   timeout=120s   date=2026-09-03 19:37
+================================================================
+Benchmark                        | Plain (direct)      | Enforce (sum)    | Replace (system)    | Total (E+R)  | Speedup
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+── verifythis ─────────────────────────────────────────────────────────
+lcp                              |    147 ms V=5  OK  |      258 ms V=2  |    120 ms V=9  OK  |      378 ms |   .38x
+duplets                          |    528 ms V=19 OK  |      597 ms V=0  |    118 ms V=21 FAIL |      715 ms |   .73x
+elimination_max_rec              |   2639 ms V=16 OK  |      124 ms V=4  |    117 ms V=4  OK  |      241 ms | 10.95x
+elimination_max_rec_onepoint     |   1071 ms V=20 OK  |      135 ms V=4  |    119 ms V=14 OK  |      254 ms |  4.21x
+prefixsum                        |   3639 ms V=50 OK  |      746 ms V=11 |    122 ms V=30 OK  |      868 ms |  4.19x
+prefixsum_rec                    |   1972 ms V=84 OK  |      496 ms V=2  |    118 ms V=24 OK  |      614 ms |  3.21x
+
+── recursive-simple ───────────────────────────────────────────────────
+sum                              |    115 ms V=2  OK  |      112 ms V=2  |    109 ms V=2  OK  |      221 ms |   .52x
+fibo                             |    117 ms V=1  OK  |      108 ms V=3  |    115 ms V=2  FAIL |      223 ms |   .52x
+
+── recursive ──────────────────────────────────────────────────────────
+EvenOdd                          |    132 ms V=2  OK  |      330 ms V=23 |    112 ms V=2  OK  |      442 ms |   .29x
+Addition                         |   7978 ms V=2049 OK  |      118 ms V=3  |    113 ms V=2  OK  |      231 ms | 34.53x
+MultCommutative                  |  28660 ms V=4097 OK  |      142 ms V=3  |    119 ms V=3  OK  |      261 ms | 109.80x
+
+── loop-lit (loop invariant + k-induction) ────────────────────────────
+
+  Format: benchmark | plain (unwind N) | loop-invariant
+Benchmark                    | Plain BMC                      | Loop Invariant (--loop-invariant)
+────────────────────────────────────────────────────────────────────────────────────────────
+hhk2008 (b<=1000000)         |    114 ms V=1    FAIL |    119 ms V=2    OK  
+    Plain note: --unwind 10 only verifies cnt<=10; FAIL = unwinding assertion for cnt>10
+cggmp2005 (fixed loop)       |    108 ms V=0    OK   |    119 ms V=2    OK  
+    Plain note: loop runs exactly 4 times; --unwind 5 sufficient; VCC sliced to 0
+
+================================================================
+  Columns: Plain=direct BMC | Enforce=sum of per-fn runs
+           Replace=system-level with contract abstraction
+           Total=Enforce+Replace | Speedup=Plain/Total
+  V=VCC count (Generated VCC from ESBMC output)
+  Result: OK=VERIFICATION SUCCESSFUL, FAIL=FAILED, TO=timeout, ERR=error
+  loop-lit: Plain uses fixed --unwind; Inv uses --loop-invariant (no unroll)
+================================================================

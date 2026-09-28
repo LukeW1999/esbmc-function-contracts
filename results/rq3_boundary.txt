@@ -1,0 +1,376 @@
+==============================================================
+ESBMC vs CBMC: Field-Sensitive Assigns Comparison
+==============================================================
+
+=== Tool Versions ===
+ESBMC: ESBMC version 8.5.0 64-bit x86_64 linux
+CBMC:  6.8.0 (cbmc-6.8.0)
+
+==============================================================
+                      ESBMC Tests
+==============================================================
+
+=== ESBMC PASS: field-sensitive assigns ===
+Target: 64-bit little-endian x86_64-unknown-linux with esbmclibc
+Parsing field_sensitive_esbmc.c
+Converting
+Generating GOTO Program
+GOTO program creation time: 0.113s
+Replacing calls with contracts for 5 function(s)
+Removed function c:@F@set_x (replaced with contract)
+Removed function c:@F@modify_array_element (replaced with contract)
+Removed function c:@F@update_multiple_fields (replaced with contract)
+Removed function c:@F@modify_global_and_ptr (replaced with contract)
+Removed function c:@F@increment_counter (replaced with contract)
+GOTO program processing time: 0.001s
+Starting Bounded Model Checking
+Symex completed in: 0.002s (63 assignments)
+Caching time: 0.000s (removed 0 assertions)
+Slicing time: 0.000s (removed 32 assignments)
+Generated 107 VCC(s), 18 remaining after simplification (31 assignments)
+No solver specified; defaulting to bitwuzla
+Encoding remaining VCC(s) using bit-vector/floating-point arithmetic
+Encoding to solver time: 0.001s
+Solving with solver Bitwuzla 0.9.0
+Runtime decision procedure: 0.006s
+BMC program time: 0.009s
+
+** Results:
+field_sensitive_esbmc.c, function main
+  PASSED       [main.assertion.1]             line 145  contract requires
+  PASSED       [main.object-out-of-bounds.1]  line 145  dereference failure: Access to object out of bounds
+  PASSED       [main.assertion.2]             line 145  dereference failure: Incorrect alignment when accessing data object
+  PASSED       [main.assertion.3]             line 146  assertion pt.x == 99
+  PASSED       [main.assertion.4]             line 147  assertion pt.y == 2
+  PASSED       [main.assertion.5]             line 148  assertion pt.z == 3
+  PASSED       [main.assertion.6]             line 154  contract requires
+  PASSED       [main.assertion.7]             line 155  assertion global_array[0] == 10
+  PASSED       [main.assertion.8]             line 156  assertion global_array[1] == 999
+  PASSED       [main.assertion.9]             line 157  assertion global_array[2] == 30
+  PASSED       [main.assertion.10]            line 161  contract requires
+  PASSED       [main.object-out-of-bounds.2]  line 161  dereference failure: Access to object out of bounds
+  PASSED       [main.assertion.11]            line 161  dereference failure: Incorrect alignment when accessing data object
+  PASSED       [main.assertion.12]            line 162  assertion mf.a == 100
+  PASSED       [main.assertion.13]            line 163  assertion mf.b == 2
+  PASSED       [main.assertion.14]            line 164  assertion mf.c == 300
+  PASSED       [main.assertion.15]            line 165  assertion mf.d == 4
+  PASSED       [main.assertion.16]            line 171  contract requires
+  PASSED       [main.object-out-of-bounds.3]  line 171  dereference failure: Access to object out of bounds
+  PASSED       [main.assertion.17]            line 171  dereference failure: Incorrect alignment when accessing data object
+  PASSED       [main.assertion.18]            line 172  assertion global_x == 42
+  PASSED       [main.assertion.19]            line 173  assertion local == 100
+  PASSED       [main.assertion.20]            line 174  assertion global_y == 200
+  PASSED       [main.assertion.21]            line 178  contract requires
+  PASSED       [main.object-out-of-bounds.4]  line 178  dereference failure: Access to object out of bounds
+  PASSED       [main.assertion.22]            line 178  dereference failure: Incorrect alignment when accessing data object
+  PASSED       [main.assertion.23]            line 179  assertion cnt.count == 51
+  PASSED       [main.assertion.24]            line 180  assertion cnt.max_count == 100
+
+** 0 of 28 properties failed, 28 passed
+
+VERIFICATION SUCCESSFUL
+ESBMC version 8.5.0 64-bit x86_64 linux
+
+=== ESBMC FAIL: weak ensures ===
+Target: 64-bit little-endian x86_64-unknown-linux with esbmclibc
+Parsing field_sensitive_fail_esbmc.c
+Converting
+Generating GOTO Program
+GOTO program creation time: 0.100s
+Replacing calls with contracts for 2 function(s)
+Removed function c:@F@weak_ensures_contract (replaced with contract)
+Removed function c:@F@trivial_ensures (replaced with contract)
+GOTO program processing time: 0.001s
+Starting Bounded Model Checking
+Symex completed in: 0.000s (24 assignments)
+Caching time: 0.000s (removed 0 assertions)
+Slicing time: 0.000s (removed 17 assignments)
+Generated 3 VCC(s), 2 remaining after simplification (7 assignments)
+No solver specified; defaulting to bitwuzla
+Encoding remaining VCC(s) using bit-vector/floating-point arithmetic
+Encoding to solver time: 0.000s
+Solving with solver Bitwuzla 0.9.0
+Runtime decision procedure: 0.001s
+Building error trace
+
+[Counterexample]
+
+
+State 1 file field_sensitive_fail_esbmc.c line 50 column 5 function main thread 0
+----------------------------------------------------
+  global_x = 42 (00000000 00000000 00000000 00101010)
+
+State 2 file field_sensitive_fail_esbmc.c line 50 column 5 function main thread 0
+----------------------------------------------------
+  global_y = -2147483648 (10000000 00000000 00000000 00000000)
+
+State 4 file field_sensitive_fail_esbmc.c line 53 column 5 function main thread 0
+----------------------------------------------------
+Violated property:
+  file field_sensitive_fail_esbmc.c line 53 column 5 function main
+  assertion global_y == 100
+  global_y == 100
+
+
+** Results:
+field_sensitive_fail_esbmc.c, function main
+  PASSED       [main.assertion.1]  line 52  assertion global_x == 42
+  FAILED       [main.assertion.2]  line 53  assertion global_y == 100
+  NOT CHECKED  [main.assertion.3]  line 58  assertion scalar_var == 999
+
+** 1 of 3 properties failed, 1 passed, 1 not checked
+   (this mode stops at the first violation; use --multi-property for a verdict on every property)
+
+VERIFICATION FAILED
+ESBMC version 8.5.0 64-bit x86_64 linux
+
+==============================================================
+                      CBMC Tests
+==============================================================
+
+=== CBMC PASS: field-sensitive assigns ===
+Reading GOTO program from 'test.goto'
+Function Pointer Removal
+Virtual function removal
+Cleaning inline assembler statements
+Trying to force one backedge per target
+Replacing function calls with contracts
+Writing GOTO program to 't1.goto'
+Reading GOTO program from 't1.goto'
+Function Pointer Removal
+Virtual function removal
+Cleaning inline assembler statements
+Trying to force one backedge per target
+Replacing function calls with contracts
+Writing GOTO program to 't2.goto'
+Reading GOTO program from 't2.goto'
+Function Pointer Removal
+Virtual function removal
+Cleaning inline assembler statements
+Trying to force one backedge per target
+Replacing function calls with contracts
+Writing GOTO program to 't3.goto'
+Reading GOTO program from 't3.goto'
+Function Pointer Removal
+Virtual function removal
+Cleaning inline assembler statements
+Trying to force one backedge per target
+Replacing function calls with contracts
+Writing GOTO program to 't4.goto'
+Reading GOTO program from 't4.goto'
+Function Pointer Removal
+Virtual function removal
+Cleaning inline assembler statements
+Trying to force one backedge per target
+Replacing function calls with contracts
+Writing GOTO program to 'final.goto'
+CBMC version 6.8.0 (cbmc-6.8.0) 64-bit x86_64 linux
+Reading GOTO program from file final.goto
+Generating GOTO Program
+Adding CPROVER library (x86_64)
+Removal of function pointers and virtual functions
+Generic Property Instrumentation
+Starting Bounded Model Checking
+
+** Results:
+field_sensitive_cbmc.c function increment_counter
+[increment_counter.pointer_dereference.1] line 120 dereference failure: dead object in (&cnt)->count: SUCCESS
+[increment_counter.pointer_dereference.2] line 121 dereference failure: dead object in (&cnt)->max_count: SUCCESS
+[increment_counter.assigns.1] line 122 Check that (&cnt)->count is valid: SUCCESS
+[increment_counter.pointer_dereference.5] line 122 dereference failure: pointer NULL in *((signed int *)__car_lb): SUCCESS
+[increment_counter.pointer_dereference.6] line 122 dereference failure: pointer invalid in *((signed int *)__car_lb): SUCCESS
+[increment_counter.pointer_dereference.7] line 122 dereference failure: deallocated dynamic object in *((signed int *)__car_lb): SUCCESS
+[increment_counter.pointer_dereference.8] line 122 dereference failure: dead object in *((signed int *)__car_lb): SUCCESS
+[increment_counter.pointer_dereference.9] line 122 dereference failure: pointer outside object bounds in *((signed int *)__car_lb): SUCCESS
+[increment_counter.pointer_dereference.10] line 122 dereference failure: invalid integer address in *((signed int *)__car_lb): SUCCESS
+[increment_counter.pointer_dereference.11] line 123 dereference failure: dead object in (&cnt)->max_count: SUCCESS
+[increment_counter.pointer_primitives.1] line 123 dead object in R_OK(&cnt, 8ul): SUCCESS
+[increment_counter.overflow.1] line 124 arithmetic overflow on signed + in tmp_cc + 1: SUCCESS
+[increment_counter.pointer_dereference.12] line 124 dereference failure: dead object in (&cnt)->count: SUCCESS
+[increment_counter.pointer_dereference.3] line 125 dereference failure: dead object in (&cnt)->count: SUCCESS
+[increment_counter.pointer_primitives.2] line 125 dead object in R_OK(&cnt, 8ul): SUCCESS
+[increment_counter.pointer_dereference.13] line 126 dereference failure: dead object in (&cnt)->count: SUCCESS
+[increment_counter.pointer_dereference.4] line 127 dereference failure: dead object in (&cnt)->max_count: SUCCESS
+[increment_counter.pointer_dereference.14] line 127 dereference failure: dead object in (&cnt)->max_count: SUCCESS
+[increment_counter.pointer_primitives.3] line 127 dead object in R_OK(&cnt, 8ul): SUCCESS
+[increment_counter.pointer_dereference.15] line 129 dereference failure: pointer NULL in c->count: SUCCESS
+[increment_counter.pointer_dereference.16] line 129 dereference failure: pointer invalid in c->count: SUCCESS
+[increment_counter.pointer_dereference.17] line 129 dereference failure: deallocated dynamic object in c->count: SUCCESS
+[increment_counter.pointer_dereference.18] line 129 dereference failure: dead object in c->count: SUCCESS
+[increment_counter.pointer_dereference.19] line 129 dereference failure: pointer outside object bounds in c->count: SUCCESS
+[increment_counter.pointer_dereference.20] line 129 dereference failure: invalid integer address in c->count: SUCCESS
+[increment_counter.pointer_dereference.21] line 129 dereference failure: pointer NULL in c->max_count: SUCCESS
+[increment_counter.pointer_dereference.22] line 129 dereference failure: pointer invalid in c->max_count: SUCCESS
+[increment_counter.pointer_dereference.23] line 129 dereference failure: deallocated dynamic object in c->max_count: SUCCESS
+[increment_counter.pointer_dereference.24] line 129 dereference failure: dead object in c->max_count: SUCCESS
+[increment_counter.pointer_dereference.25] line 129 dereference failure: pointer outside object bounds in c->max_count: SUCCESS
+[increment_counter.pointer_dereference.26] line 129 dereference failure: invalid integer address in c->max_count: SUCCESS
+[increment_counter.overflow.2] line 130 arithmetic overflow on signed + in c->count + 1: SUCCESS
+[increment_counter.precondition.1] line 174 Check requires clause of increment_counter in main: SUCCESS
+[increment_counter.precondition.2] line 174 Check requires clause of increment_counter in main: SUCCESS
+[increment_counter.precondition.3] line 174 Check requires clause of increment_counter in main: SUCCESS
+
+field_sensitive_cbmc.c function main
+[main.assertion.1] line 142 assertion pt.x == 99: SUCCESS
+[main.assertion.2] line 143 assertion pt.y == 2: SUCCESS
+[main.assertion.3] line 144 assertion pt.z == 3: SUCCESS
+[main.assertion.4] line 151 assertion global_array[0] == 10: SUCCESS
+[main.assertion.5] line 152 assertion global_array[1] == 999: SUCCESS
+[main.assertion.6] line 153 assertion global_array[2] == 30: SUCCESS
+[main.assertion.7] line 158 assertion mf.a == 100: SUCCESS
+[main.assertion.8] line 159 assertion mf.b == 2: SUCCESS
+[main.assertion.9] line 160 assertion mf.c == 300: SUCCESS
+[main.assertion.10] line 161 assertion mf.d == 4: SUCCESS
+[main.assertion.11] line 168 assertion global_x == 42: SUCCESS
+[main.assertion.12] line 169 assertion local == 100: SUCCESS
+[main.assertion.13] line 170 assertion global_y == 200: SUCCESS
+[main.assertion.14] line 175 assertion cnt.count == 51: SUCCESS
+[main.assertion.15] line 176 assertion cnt.max_count == 100: SUCCESS
+
+field_sensitive_cbmc.c function modify_array_element
+[modify_array_element.assigns.1] line 57 Check that global_array[(signed long int)1] is valid: SUCCESS
+[modify_array_element.pointer_dereference.1] line 57 dereference failure: pointer outside object bounds in *((signed int *)__car_lb): SUCCESS
+[modify_array_element.array_bounds.1] line 60 array 'global_array' lower bound in global_array[(signed long int)i]: SUCCESS
+[modify_array_element.array_bounds.2] line 60 array 'global_array' upper bound in global_array[(signed long int)i]: SUCCESS
+[modify_array_element.precondition.1] line 150 Check requires clause of modify_array_element in main: SUCCESS
+
+field_sensitive_cbmc.c function modify_global_and_ptr
+[modify_global_and_ptr.assigns.1] line 98 Check that global_x is valid: SUCCESS
+[modify_global_and_ptr.assigns.2] line 98 Check that *(&local) is valid: SUCCESS
+[modify_global_and_ptr.pointer_dereference.1] line 98 dereference failure: pointer NULL in *((signed int *)__car_lb$0): SUCCESS
+[modify_global_and_ptr.pointer_dereference.2] line 98 dereference failure: pointer invalid in *((signed int *)__car_lb$0): SUCCESS
+[modify_global_and_ptr.pointer_dereference.3] line 98 dereference failure: deallocated dynamic object in *((signed int *)__car_lb$0): SUCCESS
+[modify_global_and_ptr.pointer_dereference.4] line 98 dereference failure: dead object in *((signed int *)__car_lb$0): SUCCESS
+[modify_global_and_ptr.pointer_dereference.5] line 98 dereference failure: pointer outside object bounds in *((signed int *)__car_lb$0): SUCCESS
+[modify_global_and_ptr.pointer_dereference.6] line 98 dereference failure: invalid integer address in *((signed int *)__car_lb$0): SUCCESS
+[modify_global_and_ptr.pointer_dereference.7] line 98 dereference failure: pointer outside object bounds in *((signed int *)__car_lb): SUCCESS
+[modify_global_and_ptr.pointer_dereference.8] line 100 dereference failure: dead object in *(&local): SUCCESS
+[modify_global_and_ptr.pointer_dereference.9] line 103 dereference failure: pointer NULL in *ptr: SUCCESS
+[modify_global_and_ptr.pointer_dereference.10] line 103 dereference failure: pointer invalid in *ptr: SUCCESS
+[modify_global_and_ptr.pointer_dereference.11] line 103 dereference failure: deallocated dynamic object in *ptr: SUCCESS
+[modify_global_and_ptr.pointer_dereference.12] line 103 dereference failure: dead object in *ptr: SUCCESS
+[modify_global_and_ptr.pointer_dereference.13] line 103 dereference failure: pointer outside object bounds in *ptr: SUCCESS
+[modify_global_and_ptr.pointer_dereference.14] line 103 dereference failure: invalid integer address in *ptr: SUCCESS
+[modify_global_and_ptr.precondition.1] line 167 Check requires clause of modify_global_and_ptr in main: SUCCESS
+
+field_sensitive_cbmc.c function set_x
+[set_x.assigns.1] line 38 Check that (&pt)->x is valid: SUCCESS
+[set_x.pointer_dereference.3] line 38 dereference failure: pointer NULL in *((signed int *)__car_lb): SUCCESS
+[set_x.pointer_dereference.4] line 38 dereference failure: pointer invalid in *((signed int *)__car_lb): SUCCESS
+[set_x.pointer_dereference.5] line 38 dereference failure: deallocated dynamic object in *((signed int *)__car_lb): SUCCESS
+[set_x.pointer_dereference.6] line 38 dereference failure: dead object in *((signed int *)__car_lb): SUCCESS
+[set_x.pointer_dereference.7] line 38 dereference failure: pointer outside object bounds in *((signed int *)__car_lb): SUCCESS
+[set_x.pointer_dereference.8] line 38 dereference failure: invalid integer address in *((signed int *)__car_lb): SUCCESS
+[set_x.pointer_dereference.9] line 39 dereference failure: dead object in (&pt)->x: SUCCESS
+[set_x.pointer_dereference.1] line 40 dereference failure: dead object in (&pt)->y: SUCCESS
+[set_x.pointer_dereference.10] line 40 dereference failure: dead object in (&pt)->y: SUCCESS
+[set_x.pointer_primitives.1] line 40 dead object in R_OK(&pt, 12ul): SUCCESS
+[set_x.pointer_dereference.2] line 41 dereference failure: dead object in (&pt)->z: SUCCESS
+[set_x.pointer_dereference.11] line 41 dereference failure: dead object in (&pt)->z: SUCCESS
+[set_x.pointer_primitives.2] line 41 dead object in R_OK(&pt, 12ul): SUCCESS
+[set_x.pointer_dereference.12] line 43 dereference failure: pointer NULL in p->x: SUCCESS
+[set_x.pointer_dereference.13] line 43 dereference failure: pointer invalid in p->x: SUCCESS
+[set_x.pointer_dereference.14] line 43 dereference failure: deallocated dynamic object in p->x: SUCCESS
+[set_x.pointer_dereference.15] line 43 dereference failure: dead object in p->x: SUCCESS
+[set_x.pointer_dereference.16] line 43 dereference failure: pointer outside object bounds in p->x: SUCCESS
+[set_x.pointer_dereference.17] line 43 dereference failure: invalid integer address in p->x: SUCCESS
+[set_x.precondition.1] line 141 Check requires clause of set_x in main: SUCCESS
+
+field_sensitive_cbmc.c function update_multiple_fields
+[update_multiple_fields.assigns.1] line 79 Check that (&mf)->a is valid: SUCCESS
+[update_multiple_fields.assigns.2] line 79 Check that (&mf)->c is valid: SUCCESS
+[update_multiple_fields.pointer_dereference.3] line 79 dereference failure: pointer NULL in *((signed int *)__car_lb$0): SUCCESS
+[update_multiple_fields.pointer_dereference.4] line 79 dereference failure: pointer invalid in *((signed int *)__car_lb$0): SUCCESS
+[update_multiple_fields.pointer_dereference.5] line 79 dereference failure: deallocated dynamic object in *((signed int *)__car_lb$0): SUCCESS
+[update_multiple_fields.pointer_dereference.6] line 79 dereference failure: dead object in *((signed int *)__car_lb$0): SUCCESS
+[update_multiple_fields.pointer_dereference.7] line 79 dereference failure: pointer outside object bounds in *((signed int *)__car_lb$0): SUCCESS
+[update_multiple_fields.pointer_dereference.8] line 79 dereference failure: invalid integer address in *((signed int *)__car_lb$0): SUCCESS
+[update_multiple_fields.pointer_dereference.9] line 79 dereference failure: pointer NULL in *((signed int *)__car_lb): SUCCESS
+[update_multiple_fields.pointer_dereference.10] line 79 dereference failure: pointer invalid in *((signed int *)__car_lb): SUCCESS
+[update_multiple_fields.pointer_dereference.11] line 79 dereference failure: deallocated dynamic object in *((signed int *)__car_lb): SUCCESS
+[update_multiple_fields.pointer_dereference.12] line 79 dereference failure: dead object in *((signed int *)__car_lb): SUCCESS
+[update_multiple_fields.pointer_dereference.13] line 79 dereference failure: pointer outside object bounds in *((signed int *)__car_lb): SUCCESS
+[update_multiple_fields.pointer_dereference.14] line 79 dereference failure: invalid integer address in *((signed int *)__car_lb): SUCCESS
+[update_multiple_fields.pointer_dereference.15] line 80 dereference failure: dead object in (&mf)->a: SUCCESS
+[update_multiple_fields.pointer_dereference.16] line 81 dereference failure: dead object in (&mf)->c: SUCCESS
+[update_multiple_fields.pointer_dereference.1] line 82 dereference failure: dead object in (&mf)->b: SUCCESS
+[update_multiple_fields.pointer_dereference.17] line 82 dereference failure: dead object in (&mf)->b: SUCCESS
+[update_multiple_fields.pointer_primitives.1] line 82 dead object in R_OK(&mf, 16ul): SUCCESS
+[update_multiple_fields.pointer_dereference.2] line 83 dereference failure: dead object in (&mf)->d: SUCCESS
+[update_multiple_fields.pointer_dereference.18] line 83 dereference failure: dead object in (&mf)->d: SUCCESS
+[update_multiple_fields.pointer_primitives.2] line 83 dead object in R_OK(&mf, 16ul): SUCCESS
+[update_multiple_fields.pointer_dereference.19] line 85 dereference failure: pointer NULL in m->a: SUCCESS
+[update_multiple_fields.pointer_dereference.20] line 85 dereference failure: pointer invalid in m->a: SUCCESS
+[update_multiple_fields.pointer_dereference.21] line 85 dereference failure: deallocated dynamic object in m->a: SUCCESS
+[update_multiple_fields.pointer_dereference.22] line 85 dereference failure: dead object in m->a: SUCCESS
+[update_multiple_fields.pointer_dereference.23] line 85 dereference failure: pointer outside object bounds in m->a: SUCCESS
+[update_multiple_fields.pointer_dereference.24] line 85 dereference failure: invalid integer address in m->a: SUCCESS
+[update_multiple_fields.pointer_dereference.25] line 86 dereference failure: pointer NULL in m->c: SUCCESS
+[update_multiple_fields.pointer_dereference.26] line 86 dereference failure: pointer invalid in m->c: SUCCESS
+[update_multiple_fields.pointer_dereference.27] line 86 dereference failure: deallocated dynamic object in m->c: SUCCESS
+[update_multiple_fields.pointer_dereference.28] line 86 dereference failure: dead object in m->c: SUCCESS
+[update_multiple_fields.pointer_dereference.29] line 86 dereference failure: pointer outside object bounds in m->c: SUCCESS
+[update_multiple_fields.pointer_dereference.30] line 86 dereference failure: invalid integer address in m->c: SUCCESS
+[update_multiple_fields.precondition.1] line 157 Check requires clause of update_multiple_fields in main: SUCCESS
+
+** 0 of 128 failed (1 iterations)
+VERIFICATION SUCCESSFUL
+
+=== CBMC FAIL: weak ensures ===
+Reading GOTO program from 'fail.goto'
+Function Pointer Removal
+Virtual function removal
+Cleaning inline assembler statements
+Trying to force one backedge per target
+Replacing function calls with contracts
+Writing GOTO program to 'f1.goto'
+Reading GOTO program from 'f1.goto'
+Function Pointer Removal
+Virtual function removal
+Cleaning inline assembler statements
+Trying to force one backedge per target
+Replacing function calls with contracts
+Writing GOTO program to 'f2.goto'
+CBMC version 6.8.0 (cbmc-6.8.0) 64-bit x86_64 linux
+Reading GOTO program from file f2.goto
+Generating GOTO Program
+Adding CPROVER library (x86_64)
+Removal of function pointers and virtual functions
+Generic Property Instrumentation
+Starting Bounded Model Checking
+Passing problem to propositional reduction
+converting SSA
+Running propositional reduction
+SAT checker: instance is SATISFIABLE
+
+** Results:
+field_sensitive_fail_cbmc.c function main
+[main.assertion.1] line 55 assertion global_x == 42: SUCCESS
+[main.assertion.2] line 56 assertion global_y == 100: FAILURE
+[main.assertion.3] line 61 assertion scalar_var == 999: FAILURE
+
+field_sensitive_fail_cbmc.c function trivial_ensures
+[trivial_ensures.assigns.1] line 39 Check that scalar_var is valid: SUCCESS
+[trivial_ensures.pointer_dereference.1] line 39 dereference failure: pointer outside object bounds in *((signed int *)__car_lb): SUCCESS
+
+field_sensitive_fail_cbmc.c function weak_ensures_contract
+[weak_ensures_contract.assigns.1] line 25 Check that global_x is valid: SUCCESS
+[weak_ensures_contract.assigns.2] line 25 Check that global_y is valid: SUCCESS
+[weak_ensures_contract.pointer_dereference.1] line 25 dereference failure: pointer outside object bounds in *((signed int *)__car_lb$0): SUCCESS
+[weak_ensures_contract.pointer_dereference.2] line 25 dereference failure: pointer outside object bounds in *((signed int *)__car_lb): SUCCESS
+
+** 2 of 9 failed (2 iterations)
+VERIFICATION FAILED
+
+==============================================================
+                      Results Summary
+==============================================================
+
+Test                 | ESBMC        | CBMC         | Expected  
+---------------------+--------------+--------------+-----------
+Field-sensitive      | PASS         | PASS         | PASS      
+Weak ensures         | FAIL         | FAIL         | FAIL      
+
+PASS time            | ESBMC: 0.135s | CBMC: 0.021s
+FAIL time            | ESBMC: 0.111s | CBMC: 0.013s
+

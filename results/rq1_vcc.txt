@@ -1,0 +1,147 @@
+==============================================================
+Experiment 2: Contract Verification Efficiency Comparison
+==============================================================
+
+=== Tool Versions ===
+ESBMC version 8.5.0 64-bit x86_64 linux
+6.8.0 (cbmc-6.8.0)
+
+==============================================================
+ESBMC Single Call Test
+==============================================================
+
+--- Mode 1: Direct run (no contract) ---
+Time: 113ms
+
+--- Mode 2: Enforce(--function) + Replace ---
+Enforce time: 113ms
+Replace time: 112ms
+Total time: 225ms
+
+--- Mode 3: Enforce(from main, 1_1.c) + Replace ---
+Enforce time: 111ms
+Replace time: 110ms
+Total time: 221ms
+
+==============================================================
+ESBMC Multiple Calls Test (10 calls)
+==============================================================
+
+--- Mode 1: Direct run (no contract) ---
+Time: 116ms
+
+--- Mode 2: Enforce(--function) + Replace ---
+Enforce time: 116ms
+Replace time: 116ms
+Total time: 232ms
+
+--- Mode 3: Enforce(from main, 1_1.c) + Replace ---
+Enforce time: 116ms
+Replace time: 116ms
+Total time: 232ms
+
+==============================================================
+CBMC Single Call Test
+==============================================================
+
+--- Mode 1: Direct run (no contract) ---
+Time: 11ms
+
+--- Mode 2: Enforce(--function) + Replace ---
+Reading GOTO program from '1.goto'
+Function Pointer Removal
+Virtual function removal
+Cleaning inline assembler statements
+Trying to force one backedge per target
+Enforcing contracts
+Adding nondeterministic initialization of static/global variables.
+Writing GOTO program to '1_e.goto'
+Reading GOTO program from '1.goto'
+Function Pointer Removal
+Virtual function removal
+Cleaning inline assembler statements
+Trying to force one backedge per target
+Replacing function calls with contracts
+Writing GOTO program to '1_r.goto'
+Enforce time: 17ms
+Replace time: 13ms
+Total time: 30ms
+
+--- Mode 3: Enforce(from main, 1_1.c) + Replace ---
+Reading GOTO program from '1_1.goto'
+Function Pointer Removal
+Virtual function removal
+Cleaning inline assembler statements
+Trying to force one backedge per target
+Enforcing contracts
+Adding nondeterministic initialization of static/global variables.
+Writing GOTO program to '1_1_e.goto'
+Enforce time: 12ms
+Replace time: 12ms
+Total time: 24ms
+
+==============================================================
+CBMC Multiple Calls Test (10 calls)
+==============================================================
+
+--- Mode 1: Direct run (no contract) ---
+Time: 14ms
+
+--- Mode 2: Enforce(--function) + Replace ---
+Reading GOTO program from '1.goto'
+Function Pointer Removal
+Virtual function removal
+Cleaning inline assembler statements
+Trying to force one backedge per target
+Enforcing contracts
+Adding nondeterministic initialization of static/global variables.
+Writing GOTO program to '1_e.goto'
+Reading GOTO program from '1.goto'
+Function Pointer Removal
+Virtual function removal
+Cleaning inline assembler statements
+Trying to force one backedge per target
+Replacing function calls with contracts
+Writing GOTO program to '1_r.goto'
+Enforce time: 18ms
+Replace time: 14ms
+Total time: 32ms
+
+--- Mode 3: Enforce(from main, 1_1.c) + Replace ---
+Reading GOTO program from '1_1.goto'
+Function Pointer Removal
+Virtual function removal
+Cleaning inline assembler statements
+Trying to force one backedge per target
+Enforcing contracts
+Adding nondeterministic initialization of static/global variables.
+Writing GOTO program to '1_1_e.goto'
+Enforce time: 21ms
+Replace time: 15ms
+Total time: 36ms
+
+==============================================================
+                      Results Summary
+==============================================================
+
+=== ESBMC ===
+Mode                           | Single Call     | Multiple (10x) 
+-------------------------------+-----------------+----------------
+1. Direct run (no contract)    |          113ms |          116ms
+2. Enforce(--function)+Replace |          225ms |          232ms
+3. Enforce(from main)+Replace  |          221ms |          232ms
+
+=== CBMC ===
+Mode                           | Single Call     | Multiple (10x) 
+-------------------------------+-----------------+----------------
+1. Direct run (no contract)    |           11ms |           14ms
+2. Enforce(--function)+Replace |           30ms |           32ms
+3. Enforce(from main)+Replace  |           24ms |           36ms
+
+=== Enforce Entry Point Comparison (--function entry vs from main entry) ===
+Tool       | Single Call               | Multiple Calls           
+-----------+---------------------------+--------------------------
+ESBMC      | --func:  113ms main:  111ms | --func:  116ms main:  116ms
+CBMC       | --func:   17ms main:   12ms | --func:   18ms main:   21ms
+
+==============================================================

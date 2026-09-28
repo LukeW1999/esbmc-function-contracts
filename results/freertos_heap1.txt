@@ -1,0 +1,23 @@
+================================================================
+  FreeRTOS heap_1 ESBMC Contract Verification
+================================================================
+
+ESBMC: ESBMC version 8.5.0 64-bit x86_64 linux
+
+=== Phase 1: Enforce ===
+Command: esbmc heap1_contracts.c --enforce-contract pvPortMalloc --function pvPortMalloc --unwind 5
+Result : PASS   Time: 124ms
+
+=== Phase 2: Direct harness ===
+  verify_single_alloc ... PASS   123ms
+  verify_exhaustion ... PASS   125ms
+  verify_two_allocs ... PASS   121ms
+
+=== Phase 3: Replace ===
+  verify_single_alloc ... PASS   121ms
+  verify_exhaustion ... PASS   126ms
+  verify_two_allocs ... PASS   140ms
+
+================================================================
+Log files: /tmp/heap1_*.log
+================================================================

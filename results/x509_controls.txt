@@ -1,0 +1,10 @@
+Negative controls (every line must read FAIL):
+  A    assert ret<=1 -> <=0             FAIL  ok
+  B    assert ret<=1 -> <=0             FAIL  ok
+  C    assert eaten>0 -> >1             FAIL  ok
+  D1   hdr_len==2 -> ==3                FAIL  ok
+  D2   RV in {0,-1} -> ==0              FAIL  ok
+  D3   eaten<=len -> <len               FAIL  ok
+  D4   assert eaten>0 -> >1             FAIL  ok
+
+All seven controls fired.

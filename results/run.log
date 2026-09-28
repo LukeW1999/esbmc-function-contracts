@@ -1,0 +1,52 @@
+[2026-09-03T09:01:19Z] pinned esbmc=2f719f59e03ab98fa54c5e89757e6d95527daad9 -> /root/results-full/esbmc-pinned
+[2026-09-03T09:01:19Z] cooling down 240s before the first measurement
+[2026-09-03T09:05:19Z] START exp_mlkem_reduce
+[2026-09-03T09:16:35Z]   mlkem_reduce rep 1
+[2026-09-03T09:27:53Z]   mlkem_reduce rep 2
+[2026-09-03T09:39:12Z]   mlkem_reduce rep 3
+[2026-09-03T09:50:29Z]   mlkem_reduce rep 4
+[2026-09-03T10:01:47Z]   mlkem_reduce rep 5
+[2026-09-03T10:01:47Z] OK    exp_mlkem_reduce
+[2026-09-03T10:01:47Z] START ctl_mlkem
+[2026-09-03T10:01:49Z] OK    ctl_mlkem
+[2026-09-03T10:01:49Z] START exp_mlkem_cbmc
+[2026-09-03T10:04:40Z]   mlkem_cbmc rep 1
+[2026-09-03T10:07:33Z]   mlkem_cbmc rep 2
+[2026-09-03T10:10:24Z]   mlkem_cbmc rep 3
+[2026-09-03T10:13:15Z]   mlkem_cbmc rep 4
+[2026-09-03T10:16:06Z]   mlkem_cbmc rep 5
+[2026-09-03T10:16:06Z] OK    exp_mlkem_cbmc
+[2026-09-03T10:16:06Z] START exp_mlkem_kernels
+[2026-09-03T10:20:35Z]   mlkem_kernels rep 1
+[2026-09-03T10:25:05Z]   mlkem_kernels rep 2
+[2026-09-03T10:29:35Z]   mlkem_kernels rep 3
+[2026-09-03T10:34:05Z]   mlkem_kernels rep 4
+[2026-09-03T10:38:34Z]   mlkem_kernels rep 5
+[2026-09-03T10:38:34Z] OK    exp_mlkem_kernels
+[2026-09-03T10:38:34Z] START exp_mlkem_scaling
+[2026-09-03T10:42:16Z]   mlkem_scaling N=64
+[2026-09-03T10:51:54Z]   mlkem_scaling N=128
+[2026-09-03T11:07:29Z]   mlkem_scaling N=256
+[2026-09-03T11:07:29Z] OK    exp_mlkem_scaling
+[2026-09-03T11:07:29Z] START exp_rq2
+[2026-09-03T11:13:31Z]   rq2 rep 1
+[2026-09-03T11:19:33Z]   rq2 rep 2
+[2026-09-03T11:25:36Z]   rq2 rep 3
+[2026-09-03T11:31:38Z]   rq2 rep 4
+[2026-09-03T11:37:40Z]   rq2 rep 5
+[2026-09-03T11:37:40Z] OK    exp_rq2
+[2026-09-03T11:37:41Z] START exp_rq1
+[2026-09-03T11:37:42Z] OK    exp_rq1
+[2026-09-03T11:37:42Z] START exp_rq3
+[2026-09-03T11:37:42Z] OK    exp_rq3
+[2026-09-03T11:37:42Z] START exp_ce
+[2026-09-03T11:37:42Z] FAIL  exp_ce (continuing)
+[2026-09-03T11:37:42Z] START exp_x509
+[2026-09-03T11:37:44Z] OK    exp_x509
+[2026-09-03T11:37:44Z] START ctl_x509
+[2026-09-03T11:37:45Z] OK    ctl_x509
+[2026-09-03T11:37:45Z] START exp_svcomp
+[2026-09-03T11:38:37Z] OK    exp_svcomp
+[2026-09-03T11:38:37Z] START exp_freertos
+[2026-09-03T11:38:38Z] OK    exp_freertos
+[2026-09-03T11:38:38Z] ALL DONE -> /root/results-full
