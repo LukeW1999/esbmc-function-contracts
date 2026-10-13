@@ -13,9 +13,17 @@ the paper measures.
 
 ## Try it
 
-Build or install ESBMC 8.4 or newer, put `esbmc` on `PATH`, then:
+Either build the container, which fetches the ESBMC 8.5 release binary:
+
+    docker build -t esbmc-contracts .
+    docker run --rm esbmc-contracts
+
+or install ESBMC 8.5 or newer yourself, put `esbmc` on `PATH`, and run:
 
     scripts/smoke.sh
+
+8.4 is not enough: its Replace side rejects a stack-allocated argument to an
+`is_fresh` parameter, so the third command below fails there.
 
 Three commands, about two seconds. Expected:
 
@@ -37,6 +45,7 @@ same function with one write to an undeclared global.
 | `lean/` | `ContractSoundness.lean`, 237 lines, no `sorry`, `admit` or added `axiom` |
 | `results/` | every measurement the paper reports, one run |
 | `scripts/` | `smoke.sh`, `rerun_all.sh`, `verify_paper.py` |
+| `Dockerfile` | the 8.5 release binary with the examples and benchmarks on top |
 
 Every script takes the binary from `esbmc` on `PATH`, or from `$ESBMC`.
 

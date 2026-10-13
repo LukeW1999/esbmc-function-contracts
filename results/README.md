@@ -2,7 +2,7 @@
 
 Every measured table in the paper comes from this one run. Verify with:
 
-    ./check/verify_paper.py results-xeon-2026-09-03
+    scripts/verify_paper.py results
 
 ## Host and build
 
