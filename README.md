@@ -25,6 +25,13 @@ or install ESBMC 8.5 or newer yourself, put `esbmc` on `PATH`, and run:
 8.4 is not enough: its Replace side rejects a stack-allocated argument to an
 `is_fresh` parameter, so the third command below fails there.
 
+The 8.5 release is 61 commits short of the measured commit `2f719f59e0` and
+lacks five `is_fresh` fixes from that span. It runs the smoke test and every
+benchmark here except X.509 scenario B, where a replaced leaf is reached
+through a pointer the caller forwards into an `is_fresh` parameter. That
+scenario needs `master` at the measured commit or later; the `v8.6` tag
+contains it but has no release build yet.
+
 Three commands, about two seconds. Expected:
 
     prog.c  --enforce-contract           62 VCC, 14 properties, SUCCESSFUL
