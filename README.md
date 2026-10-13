@@ -44,7 +44,7 @@ same function with one write to an undeclared global.
 | `benchmarks/freertos/heap1/` | `heap_1` with contracts, and the harness |
 | `lean/` | `ContractSoundness.lean`, 237 lines, no `sorry`, `admit` or added `axiom` |
 | `results/` | every measurement the paper reports, one run |
-| `scripts/` | `smoke.sh`, `rerun_all.sh`, `verify_paper.py` |
+| `scripts/` | `smoke.sh`, `rerun_all.sh`, `verify_paper.py`, `gen_figures.py` (the data figures, from `results/`) |
 | `Dockerfile` | the 8.5 release binary with the examples and benchmarks on top |
 
 Every script takes the binary from `esbmc` on `PATH`, or from `$ESBMC`.
