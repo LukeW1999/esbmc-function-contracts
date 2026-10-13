@@ -40,8 +40,12 @@ same function with one write to an undeclared global.
 |---|---|
 | `examples/` | the annotated function and its frame-violating twin |
 | `benchmarks/mlkem/` | `poly_reduce`, `poly_add`, `poly_tomont`, with contracts; `poly_reduce_cbmc.c` is the CBMC arm |
-| `benchmarks/x509/` | the ANSSI parser functions, plain and contracted, with their controls |
+| `benchmarks/x509/` | the ANSSI parser functions, plain and contracted, the propagation harness and the controls |
 | `benchmarks/freertos/heap1/` | `heap_1` with contracts, and the harness |
+| `benchmarks/rq1_vcc/`, `benchmarks/rq1_w_sweep/` | the RQ1 programs: the single- and ten-call pair, and the generator of the $W$-sweep pair |
+| `benchmarks/rq2_synth/` | `synth_compute.c`, the $N \times K$ synthetic program behind RQ2 |
+| `benchmarks/rq3_boundary/`, `benchmarks/exp3_temp_write/`, `benchmarks/ce_agreement/` | the field-sensitivity pair, the temporary-write program, and the six seeded mutants |
+| `benchmarks/svcomp/` | the SV-COMP and VerifyThis tasks, plain and contracted |
 | `lean/` | `ContractSoundness.lean`, 237 lines, no `sorry`, `admit` or added `axiom` |
 | `results/` | every measurement the paper reports, one run |
 | `scripts/` | `smoke.sh`, `rerun_all.sh`, `verify_paper.py`, `gen_figures.py` (the data figures, from `results/`) |
@@ -83,6 +87,10 @@ derive from upstream projects and keep their own terms and their file headers:
   branch, and the loop invariants are dropped because ESBMC unrolls the bound
   the standard fixes.
 - `benchmarks/x509/` from the ANSSI X.509 parser.
+- `benchmarks/svcomp/` from the SV-COMP collection
+  ([sv-benchmarks](https://gitlab.com/sosy-lab/benchmarking/sv-benchmarks))
+  and the VerifyThis challenges; a file that derives from sv-benchmarks names
+  its origin and the bounds we tightened in its header.
 - `benchmarks/freertos/` from the FreeRTOS kernel. `heap_1` is self-contained:
   `freertos_stubs.h` stands in for `FreeRTOS.h` and `task.h`, so no kernel
   checkout is needed.

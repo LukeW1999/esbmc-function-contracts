@@ -41,3 +41,23 @@ At `MLKEM_N=256` CBMC's monolithic run finishes at 599.7 s against a 600 s
 budget. On two other hosts the same run measured 579 s and past 700 s, so
 whether it lands inside a fixed budget is a property of the machine. The paper
 reports the modular route's headroom instead.
+
+## Which script wrote which log
+
+| log | script |
+|---|---|
+| `rq2_synth.csv`, `mlkem_reduce.csv`, `mlkem_scaling.csv` | `scripts/rerun_all.sh` |
+| `mlkem_cbmc.csv`, `mlkem_cbmc_enforce.csv`, `mlkem_kernels.csv`, `mlkem_scaling_cbmc.csv` | the `exp_mlkem_cbmc` and `exp_mlkem_kernels` stages `run.log` lists, from a later `rerun_all.sh` that was lost with the host; the columns are those of its `erun` |
+| `rq1_vcc.txt` | `benchmarks/rq1_vcc/run_experiment2.sh` |
+| `rq1_w_sweep.csv`, `rq1_cbmc.csv` | `benchmarks/rq1_w_sweep/run_w_sweep.sh`, written afterwards from the paper's Exp 1a definition; the original driver was not kept. Its counts (5 for ESBMC, 20+W+1 for CBMC) match these files on ESBMC 8.4.0 and CBMC 6.10.0 |
+| `rq3_boundary.txt` | `benchmarks/rq3_boundary/run_comparison.sh` |
+| `ce_agreement.txt` | `benchmarks/ce_agreement/run_ce.sh`. Verdicts only, from 2026-06-26 on the development build of that day, not the pinned one: `run.log` shows the 2026-09-03 `exp_ce` stage did not start. Re-run on ESBMC 8.4.0 aarch64 on 2026-10-13, byte-identical |
+| `svcomp.txt` | `benchmarks/svcomp/run_sv_comp.sh` |
+| `x509.txt`, `x509_controls.txt` | `benchmarks/x509/run_experiment3.sh`, `run_controls.sh` |
+| `freertos_heap1.txt` | `benchmarks/freertos/heap1/run_verify.sh` |
+| `mlkem_controls.txt` | `benchmarks/mlkem/run_controls.sh` |
+
+The temporary-write row of `tab:rq3_boundary` (ESBMC passes, CBMC fails) comes
+from `benchmarks/exp3_temp_write/run_boundary_test.sh`. The two logs beside it
+are from ESBMC 8.0.0 (2026-03) and CBMC 6.8.0, verdicts only; ESBMC 8.4.0 and
+CBMC 6.10.0 give the same verdicts.

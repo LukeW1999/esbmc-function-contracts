@@ -1,3 +1,4 @@
 *.goto
 __pycache__/
 *.pyc
+generated/
