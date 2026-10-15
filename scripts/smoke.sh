@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # The three commands the paper prints, on the example it prints them for.
-# Needs `esbmc` on PATH, version >= 8.4.
+# Needs `esbmc` on PATH at the measured commit (see README for why releases fail).
 set -u
 cd "$(dirname "$0")/../examples"
 fail=0

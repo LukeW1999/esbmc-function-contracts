@@ -24,7 +24,7 @@ trap 'rm -rf "$WORK"' EXIT
 R=--replace-call-with-contract
 
 mutate() { # <find> <replace> <outfile>
-  python3 - "$1" "$2" "$WORK/$3" "$SRC" <<'PY'
+  python3 - "$1" "$2" "$WORK/$3" "$SRC" <<'PY' || { echo "could not write mutant $3" >&2; exit 1; }
 import sys
 find, repl, out, src = sys.argv[1:5]
 s = open(src).read()
@@ -36,13 +36,12 @@ PY
 check() { # <label> <description> <mutant> <esbmc args...>
   printf "  %-4s %-32s " "$1" "$2"
   local m="$3"; shift 3
-  "$ESBMC" "$WORK/$m" "$@" --unwind 5 >/dev/null 2>&1
-  if [ $? -eq 0 ]; then
-    echo "PASS  <-- control did NOT fire"
-    FAILED=1
-  else
-    echo "FAIL  ok"
-  fi
+  local out; out=$("$ESBMC" "$WORK/$m" "$@" --unwind 5 2>&1)
+  case "$out" in
+    *"VERIFICATION FAILED"*)     echo "FAIL  ok" ;;
+    *"VERIFICATION SUCCESSFUL"*) echo "PASS  <-- control did NOT fire"; FAILED=1 ;;
+    *)                           echo "ERROR <-- no verdict, so no control"; FAILED=1 ;;
+  esac
 }
 
 mutate "__ESBMC_assert(ret <= 1"  "__ESBMC_assert(ret <= 0"  m_ret.c

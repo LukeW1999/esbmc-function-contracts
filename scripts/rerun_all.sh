@@ -2,13 +2,10 @@
 # ============================================================================
 # rerun_all.sh -- one clean re-baseline of every timing table in the paper.
 #
-# Why this exists. Three incompatible ways of choosing an ESBMC binary are
-# spread across this repo: run_overnight.sh hardcoded a /tmp scratchpad path
-# that no longer exists, most per-experiment scripts default to whatever sits
-# Set ESBMC to the binary to measure; it defaults to esbmc on PATH.
-# which is 8.1.0. That is the mechanism that produced the version-mixed
-# 8.1.0/8.3.0 numbers the paper had to withdraw. This script takes exactly one
-# binary and refuses to start without a recorded commit for it.
+# Why this exists. The per-experiment scripts used to pick their own ESBMC
+# binary, which is how the version-mixed numbers the paper had to withdraw
+# were produced. This script takes exactly one binary and refuses to start
+# without a recorded commit for it.
 #
 #   ./rerun_all.sh --esbmc /path/to/esbmc --sha <git-sha> --out results-YYYY-MM-DD
 #
@@ -43,7 +40,7 @@ command -v cbmc >/dev/null || die "cbmc not on PATH"
 command -v goto-cc >/dev/null || die "goto-cc not on PATH"
 command -v goto-instrument >/dev/null || die "goto-instrument not on PATH"
 
-ROOT="$(cd "$(dirname "$0")" && pwd)"
+ROOT="$(cd "$(dirname "$0")/../benchmarks" && pwd)"
 ESBMC="$(cd "$(dirname "$ESBMC")" && pwd)/$(basename "$ESBMC")"
 export ESBMC
 mkdir -p "$OUT" || die "cannot create $OUT"
@@ -135,7 +132,7 @@ exp_mlkem_scaling(){
 }
 
 exp_rq2(){
-  cd "$ROOT/scaling_v2" || return 1
+  cd "$ROOT/rq2_synth" || return 1
   local C="$OUT/rq2_synth.csv"; echo "$HDR" > "$C"
   for rep in $(seq 1 "$REPS"); do
     for N in 5 10 20; do
@@ -151,17 +148,19 @@ exp_rq2(){
   done
 }
 
-# The remaining experiments keep their own scripts. Every one of them now reads
+# The remaining experiments keep their own scripts. Every one of them reads
 # $ESBMC, which is exported above, so none can fall back to a developer build.
-# run_sv_comp.sh is the exception: it takes the binary as argument one only.
-exp_x509(){     cd "$ROOT/x509_propagation"     && ./run_experiment3.sh > "$OUT/x509.txt" 2>&1; }
-ctl_x509(){     cd "$ROOT/x509_propagation"     && ./run_controls.sh    > "$OUT/x509_controls.txt" 2>&1; }
-ctl_mlkem(){    cd "$ROOT/mlkem"                && ./run_controls.sh    > "$OUT/mlkem_controls.txt" 2>&1; }
-exp_svcomp(){   cd "$ROOT/sv_comp_contracts"    && ./run_sv_comp.sh "$ESBMC" > "$OUT/svcomp.txt" 2>&1; }
-exp_freertos(){ cd "$ROOT/freertos_verify/heap1" && ./run_verify.sh      > "$OUT/freertos_heap1.txt" 2>&1; }
-exp_rq1(){      cd "$ROOT/efficiency"           && ./run_experiment2.sh > "$OUT/rq1_vcc.txt" 2>&1; }
+exp_x509(){     cd "$ROOT/x509"           && ./run_experiment3.sh > "$OUT/x509.txt" 2>&1; }
+ctl_x509(){     cd "$ROOT/x509"           && ./run_controls.sh    > "$OUT/x509_controls.txt" 2>&1; }
+ctl_mlkem(){    cd "$ROOT/mlkem"          && ./run_controls.sh    > "$OUT/mlkem_controls.txt" 2>&1; }
+exp_svcomp(){   cd "$ROOT/svcomp"         && ./run_sv_comp.sh     > "$OUT/svcomp.txt" 2>&1; }
+exp_freertos(){ cd "$ROOT/freertos/heap1" && ./run_verify.sh      > "$OUT/freertos_heap1.txt" 2>&1; }
+exp_rq1(){      cd "$ROOT/rq1_vcc"        && ./run_experiment2.sh > "$OUT/rq1_vcc.txt" 2>&1; }
+exp_w_sweep(){  cd "$ROOT/rq1_w_sweep"    && REPS=$REPS ./run_w_sweep.sh "$OUT" > "$OUT/rq1_w_sweep.log" 2>&1; }
+exp_rq3(){      cd "$ROOT/rq3_boundary"   && ./run_comparison.sh  > "$OUT/rq3_boundary.txt" 2>&1; }
+exp_ce(){       cd "$ROOT/ce_agreement"   && ./run_ce.sh          > "$OUT/ce_agreement.txt" 2>&1; }
 
-for stage in exp_mlkem_reduce ctl_mlkem exp_mlkem_scaling exp_rq2 exp_rq1 \
+for stage in exp_mlkem_reduce ctl_mlkem exp_mlkem_scaling exp_rq2 exp_rq1 exp_w_sweep exp_rq3 exp_ce \
              exp_x509 ctl_x509 exp_svcomp exp_freertos; do
   say "START $stage"
   if ( $stage ); then say "OK    $stage"; else say "FAIL  $stage (continuing)"; fi

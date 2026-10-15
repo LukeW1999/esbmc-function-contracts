@@ -149,6 +149,29 @@ for r in table("tab:rq1"):
     cmp(f"rq1 W={W} CBMC time", num(r[4]),
         st.median(float(x["wall_ms"]) for x in c), 3)
 
+# tab:svcomp is a single run per task, so its cells must match the log directly.
+NAMES = {"elim_max_rec": "elimination_max_rec",
+         "elim_max_rec_onepoint": "elimination_max_rec_onepoint"}
+svlog = {}
+if (LOG/"svcomp.txt").exists():
+    for line in (LOG/"svcomp.txt").read_text().splitlines():
+        m = re.match(r"^(\w+)\s+\|\s+(\d+) ms[^|]*\|\s+(\d+) ms[^|]*\|\s+(-?\d+) ms", line)
+        if m and m.group(1) not in svlog:
+            svlog[m.group(1)] = tuple(int(x) for x in m.groups()[1:])
+i = tex.index("\\label{tab:svcomp}"); k = tex.index("\\end{tabular}", i)
+for m in re.finditer(r"\\path\|(\w+)\|\s*&\s*(\d+)\s*&\s*(\d+)\s*&\s*(\d+)\s*&\s*(\d+)\s*&\s*([^&]+?)\s*&\s*([\d.]+)", tex[i:k]):
+    name, plain, enf, rep, total, spd, kstar = m.groups()
+    log = svlog.get(NAMES.get(name, name))
+    if not log:
+        FAIL.append(f"svcomp {name}: no log row"); continue
+    for tag, paper, want in (("plain", plain, log[0]), ("enf", enf, log[1]), ("rep", rep, log[2])):
+        if int(paper) != want:
+            FAIL.append(f"svcomp {name} {tag}: paper={paper} log={want}")
+    cmp(f"svcomp {name} total", int(total), log[1] + log[2], 0.01)
+    if "n/a" not in spd:
+        cmp(f"svcomp {name} speedup", num(spd), log[0] / (log[1] + log[2]), 0.01)
+    cmp(f"svcomp {name} K*", float(kstar), log[1] / (log[0] - log[2]), 0.02)
+
 # X.509 and FreeRTOS report verdicts in the paper, with their timings folded
 # into prose ranges, so check the ranges the prose states against the logs.
 def prose_range(pattern, values, tag):
