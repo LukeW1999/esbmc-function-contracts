@@ -12,6 +12,7 @@ ARG ESBMC_COMMIT=2f719f59e03ab98fa54c5e89757e6d95527daad9
 ENV DEBIAN_FRONTEND=noninteractive PATH="/root/.local/bin:${PATH}"
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git ca-certificates curl wget unzip build-essential pkg-config libzstd-dev \
+    zlib1g-dev libxml2-dev libtinfo-dev libedit-dev \
     python3 python3-pip python-is-python3 python3-toml cmake ninja-build bison flex gperf \
     llvm z3 default-jdk g++-multilib csmith libcsmith-dev libbz2-dev liblzma-dev \
     libboost-date-time-dev libboost-program-options-dev libboost-iostreams-dev \
