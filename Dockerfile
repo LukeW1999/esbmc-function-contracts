@@ -29,7 +29,7 @@ RUN git init -q /src && cd /src \
 
 FROM ubuntu:24.04
 ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && apt-get install -y --no-install-recommends libc6-dev ca-certificates curl \
+RUN apt-get update && apt-get install -y --no-install-recommends libc6-dev ca-certificates curl python3 bc \
     && curl -sSL -o /tmp/cbmc.deb https://github.com/diffblue/cbmc/releases/download/cbmc-6.8.0/ubuntu-24.04-cbmc-6.8.0-Linux.deb \
     && apt-get install -y --no-install-recommends /tmp/cbmc.deb && rm /tmp/cbmc.deb \
     && rm -rf /var/lib/apt/lists/*
