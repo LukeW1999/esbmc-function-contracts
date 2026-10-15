@@ -51,7 +51,7 @@ reports the modular route's headroom instead.
 | `rq1_vcc.txt` | `benchmarks/rq1_vcc/run_experiment2.sh` |
 | `rq1_w_sweep.csv`, `rq1_cbmc.csv` | `benchmarks/rq1_w_sweep/run_w_sweep.sh`, written afterwards from the paper's Exp 1a definition; the original driver was not kept. Its counts (5 for ESBMC, 20+W+1 for CBMC) match these files on ESBMC 8.4.0 and CBMC 6.10.0 |
 | `rq3_boundary.txt` | `benchmarks/rq3_boundary/run_comparison.sh` |
-| `ce_agreement.txt` | `benchmarks/ce_agreement/run_ce.sh`. Verdicts only, from 2026-06-26 on the development build of that day, not the pinned one: `run.log` shows the 2026-09-03 `exp_ce` stage did not start. Re-run on ESBMC 8.4.0 aarch64 on 2026-10-13, byte-identical |
+| `ce_agreement.txt` | `benchmarks/ce_agreement/run_ce.sh`. Verdicts only, from 2026-06-26 on the development build of that day, not the pinned one: `run.log` shows the 2026-09-03 `exp_ce` stage did not start. Re-run on the pinned commit on 2026-10-15 with the `is_fresh` clause below, identical |
 | `svcomp.txt` | `benchmarks/svcomp/run_sv_comp.sh` |
 | `x509.txt`, `x509_controls.txt` | `benchmarks/x509/run_experiment3.sh`, `run_controls.sh` |
 | `freertos_heap1.txt` | `benchmarks/freertos/heap1/run_verify.sh` |
@@ -61,3 +61,26 @@ The temporary-write row of `tab:rq3_boundary` (ESBMC passes, CBMC fails) comes
 from `benchmarks/exp3_temp_write/run_boundary_test.sh`. The two logs beside it
 are from ESBMC 8.0.0 (2026-03) and CBMC 6.8.0, verdicts only; ESBMC 8.4.0 and
 CBMC 6.10.0 give the same verdicts.
+
+## Two things the committed sources did not show
+
+`synth_compute.c` and `ce_agree.c` as committed on 2026-06-26 stated
+`arr != NULL` and no extent for `arr`. Since ESBMC #6484 (2026-07-30) the
+Enforce harness gives such a pointer a nondeterministic extent, and the
+`arr[i]` read then fails its bounds check on every build after that date,
+including the pinned one. The logged Enforce rows pass, and their times are
+reproduced within 2% by the clause the files now carry,
+`__ESBMC_is_fresh(arr, n * sizeof(int))`, which is also the form the tool
+paper prints. The files were brought in line on 2026-10-15.
+
+The `Command:` line printed for X.509 scenario B in `x509.txt` shows a
+comma-joined pair of names. ESBMC rejects that spelling since #6502
+(2026-07-31), so the run executed the two separate flags the script has
+always passed. The echo was corrected the day after the run.
+
+A reproduction with the 8.4 or 8.5 Linux release, or with a default
+`scripts/build.sh` build of the pinned commit, times out or runs out of
+memory on the Direct columns. That is the FPU rounding mode the ibex library
+leaves upward (ESBMC #8043, fixed in #8045 and in `v8.6`), not a property of
+the benchmarks. With the rounding mode restored, the pinned commit gives the
+Direct times in these logs within a few percent on the same CPU model.

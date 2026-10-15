@@ -13,24 +13,26 @@ the paper measures.
 
 ## Try it
 
-Either build the container, which fetches the ESBMC 8.5 release binary:
+Either build the container, which compiles ESBMC `v8.6` from source because
+that tag has no release build yet (about an hour):
 
     docker build -t esbmc-contracts .
     docker run --rm esbmc-contracts
 
-or install ESBMC 8.5 or newer yourself, put `esbmc` on `PATH`, and run:
+or install ESBMC `v8.6` or newer yourself, put `esbmc` on `PATH`, and run:
 
     scripts/smoke.sh
 
-8.4 is not enough: its Replace side rejects a stack-allocated argument to an
-`is_fresh` parameter, so the third command below fails there.
+Older binaries do not reproduce the paper. 8.4 rejects a stack-allocated
+argument to an `is_fresh` parameter on the Replace side, so the third command
+below fails there. The 8.5 release lacks the five `is_fresh` fixes between it
+and the measured commit `2f719f59e0`, so X.509 scenario B fails on it.
 
-The 8.5 release is 61 commits short of the measured commit `2f719f59e0` and
-lacks five `is_fresh` fixes from that span. It runs the smoke test and every
-benchmark here except X.509 scenario B, where a replaced leaf is reached
-through a pointer the caller forwards into an `is_fresh` parameter. That
-scenario needs `master` at the measured commit or later; the `v8.6` tag
-contains it but has no release build yet.
+Both releases also start with the FPU rounding mode set upward by the ibex
+interval library (ESBMC issue #8043). Bitwuzla, the default solver, then runs
+out of memory on the Direct baselines the paper reports in seconds. The
+measured build was configured without ibex and does not show the effect.
+`v8.6` carries the upstream fix (#8045) and the `is_fresh` fixes.
 
 Three commands, about two seconds. Expected:
 
@@ -56,7 +58,7 @@ same function with one write to an undeclared global.
 | `lean/` | `ContractSoundness.lean`, 237 lines, no `sorry`, `admit` or added `axiom` |
 | `results/` | every measurement the paper reports, one run |
 | `scripts/` | `smoke.sh`, `rerun_all.sh`, `verify_paper.py`, `gen_figures.py` (the data figures, from `results/`) |
-| `Dockerfile` | the 8.5 release binary with the examples and benchmarks on top |
+| `Dockerfile` | ESBMC `v8.6` built from source, with the examples and benchmarks on top |
 
 Every script takes the binary from `esbmc` on `PATH`, or from `$ESBMC`.
 

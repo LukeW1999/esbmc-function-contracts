@@ -30,7 +30,7 @@ int g_processed, g_other;
 
 int compute(int *arr, int n, int lo, int hi)
 {
-  REQUIRES(arr != NULL && n > 0 && n <= N && lo >= 0 && lo <= hi && hi <= 100);
+  REQUIRES(__ESBMC_is_fresh(arr, n * sizeof(int)) && n > 0 && n <= N && lo >= 0 && lo <= hi && hi <= 100);
   ASSIGNS(g_processed);
 #if MUT==4
   ENSURES(__ESBMC_return_value >= n * lo);              /* M4: WEAK (no upper) */

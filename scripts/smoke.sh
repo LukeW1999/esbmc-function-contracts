@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # The three commands the paper prints, on the example it prints them for.
-# Needs `esbmc` on PATH, version >= 8.4.
+# Needs `esbmc` on PATH, v8.6 or newer (see README for why older binaries fail).
 set -u
 cd "$(dirname "$0")/../examples"
 fail=0

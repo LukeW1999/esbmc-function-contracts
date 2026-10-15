@@ -30,7 +30,7 @@ int g_processed;        /* global the function is permitted to modify */
 
 int compute(int *arr, int n, int lo, int hi)
 {
-  REQUIRES(arr != NULL && n > 0 && n <= N && lo >= 0 && lo <= hi && hi <= 100);
+  REQUIRES(__ESBMC_is_fresh(arr, n * sizeof(int)) && n > 0 && n <= N && lo >= 0 && lo <= hi && hi <= 100);
   ASSIGNS(g_processed);                       /* frame: only g_processed */
   ENSURES(__ESBMC_return_value >= n * lo && __ESBMC_return_value <= n * hi);
 
