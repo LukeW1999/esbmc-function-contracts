@@ -22,7 +22,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN git init -q /src && cd /src \
     && git fetch -q --depth 1 https://github.com/esbmc/esbmc.git "${ESBMC_COMMIT}" \
     && git checkout -q FETCH_HEAD \
-    && sed -i 's/-DENABLE_GOTO_CONTRACTOR=On/-DENABLE_GOTO_CONTRACTOR=Off/' scripts/build.sh \
+    && sed -i -e 's/-DENABLE_GOTO_CONTRACTOR=On/-DENABLE_GOTO_CONTRACTOR=Off/' \
+              -e 's/-DBUILD_TESTING=On/-DBUILD_TESTING=Off/' \
+              -e 's/-DENABLE_REGRESSION=On/-DENABLE_REGRESSION=Off/' scripts/build.sh \
     && ./scripts/build.sh -b Release -e OFF
 
 FROM ubuntu:24.04
