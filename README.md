@@ -13,9 +13,16 @@ the paper measures.
 
 ## Try it
 
-Either build the container, which compiles ESBMC from source at the measured
-commit `2f719f59e0` with the goto-contractor off, and adds CBMC 6.8.0 (about
-an hour):
+The quickest route is the prebuilt image (x86_64, about 1 GB), which is the
+container below as pushed on 2026-10-15 and checked against the logs in
+`results/`:
+
+    docker pull ghcr.io/lukew1999/esbmc-function-contracts
+    docker run --rm ghcr.io/lukew1999/esbmc-function-contracts
+
+Otherwise build the container, which compiles ESBMC from source at the
+measured commit `2f719f59e0` with the goto-contractor off, and adds CBMC 6.8.0
+(about an hour):
 
     docker build -t esbmc-contracts .
     docker run --rm esbmc-contracts
