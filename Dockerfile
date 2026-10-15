@@ -8,7 +8,7 @@
 # Smoke:  docker run --rm esbmc-contracts
 # Shell:  docker run --rm -it esbmc-contracts bash
 FROM ubuntu:24.04 AS build
-ARG ESBMC_COMMIT=2f719f59e0
+ARG ESBMC_COMMIT=2f719f59e03ab98fa54c5e89757e6d95527daad9
 ENV DEBIAN_FRONTEND=noninteractive PATH="/root/.local/bin:${PATH}"
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git ca-certificates curl unzip build-essential pkg-config libzstd-dev \
