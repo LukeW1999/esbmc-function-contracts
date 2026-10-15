@@ -13,14 +13,14 @@ the paper measures.
 
 ## Try it
 
-Either build the container, which compiles ESBMC from source at commit
-`199741e8d8` on the `v8.6` line, because that tag still moves and has no
-release build (about an hour):
+Either build the container, which compiles ESBMC from source at the measured
+commit `2f719f59e0` with the goto-contractor off, and adds CBMC 6.8.0 (about
+an hour):
 
     docker build -t esbmc-contracts .
     docker run --rm esbmc-contracts
 
-or install ESBMC at that commit or newer yourself, put `esbmc` on `PATH`, and run:
+or build ESBMC at that commit yourself the same way, put `esbmc` on `PATH`, and run:
 
     scripts/smoke.sh
 
@@ -32,8 +32,11 @@ and the measured commit `2f719f59e0`, so X.509 scenario B fails on it.
 Both releases also start with the FPU rounding mode set upward by the ibex
 interval library (ESBMC issue #8043). Bitwuzla, the default solver, then runs
 out of memory on the Direct baselines the paper reports in seconds. The
-measured build was configured without ibex and does not show the effect.
-`v8.6` carries the upstream fix (#8045) and the `is_fresh` fixes.
+measured build was configured without ibex and does not show the effect,
+which is what the container reproduces. Upstream fixed the rounding mode on
+2026-09-29 (#8045), but the `v8.6` line that carries the fix also changes the
+Enforce harness again (#8042) and fails the ML-KEM contracts the paper
+verifies, so it does not reproduce the paper either.
 
 Three commands, about two seconds. Expected:
 
@@ -59,7 +62,7 @@ same function with one write to an undeclared global.
 | `lean/` | `ContractSoundness.lean`, 237 lines, no `sorry`, `admit` or added `axiom` |
 | `results/` | every measurement the paper reports, one run |
 | `scripts/` | `smoke.sh`, `rerun_all.sh`, `verify_paper.py`, `gen_figures.py` (the data figures, from `results/`) |
-| `Dockerfile` | ESBMC built from source at `199741e8d8` (v8.6 line), with the examples and benchmarks on top |
+| `Dockerfile` | ESBMC built from source at `2f719f59e0` without ibex, CBMC 6.8.0, and the examples and benchmarks on top |
 
 Every script takes the binary from `esbmc` on `PATH`, or from `$ESBMC`.
 

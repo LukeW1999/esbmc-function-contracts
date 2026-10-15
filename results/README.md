@@ -81,6 +81,8 @@ always passed. The echo was corrected the day after the run.
 A reproduction with the 8.4 or 8.5 Linux release, or with a default
 `scripts/build.sh` build of the pinned commit, times out or runs out of
 memory on the Direct columns. That is the FPU rounding mode the ibex library
-leaves upward (ESBMC #8043, fixed in #8045 and in `v8.6`), not a property of
-the benchmarks. With the rounding mode restored, the pinned commit gives the
-Direct times in these logs within a few percent on the same CPU model.
+leaves upward (ESBMC #8043, fixed upstream in #8045), not a property of the
+benchmarks. With the rounding mode restored, the pinned commit gives every
+verdict and VCC count in these logs and the times within a few percent on the
+same CPU model. The later `v8.6` line (checked at `199741e8d8`) does not: its
+Enforce harness (#8042) fails the ML-KEM contracts and the M5 mutant.

@@ -1,13 +1,14 @@
-# ESBMC built from source at a commit on the v8.6 line, plus the examples and
-# benchmarks the paper measures. v8.6 is the first line with the is_fresh fixes
-# of the measured commit and the rounding-mode fix (#8045) that the 8.4 and 8.5
-# releases lack. The v8.6 tag still moves and has no release build, so the
-# commit is pinned here. Compiling takes about an hour.
+# ESBMC built from source at the measured commit, with the goto-contractor
+# (ibex) switched off, plus CBMC 6.8.0 and the examples and benchmarks the
+# paper measures. Why not a release: 8.4 and 8.5 lack is_fresh fixes the
+# measurement has and start with the FPU rounding mode left upward by ibex
+# (#8043), and the later v8.6 line changes the Enforce harness again (#8042)
+# and fails the ML-KEM contracts. Compiling takes about an hour.
 # Build:  docker build -t esbmc-contracts .
 # Smoke:  docker run --rm esbmc-contracts
 # Shell:  docker run --rm -it esbmc-contracts bash
 FROM ubuntu:24.04 AS build
-ARG ESBMC_COMMIT=199741e8d8
+ARG ESBMC_COMMIT=2f719f59e0
 ENV DEBIAN_FRONTEND=noninteractive PATH="/root/.local/bin:${PATH}"
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git ca-certificates curl unzip build-essential pkg-config libzstd-dev \
@@ -19,10 +20,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 RUN git init -q /src && cd /src \
     && git fetch -q --depth 1 https://github.com/esbmc/esbmc.git "${ESBMC_COMMIT}" \
-    && git checkout -q FETCH_HEAD && ./scripts/build.sh -b Release -e OFF
+    && git checkout -q FETCH_HEAD \
+    && sed -i 's/-DENABLE_GOTO_CONTRACTOR=On/-DENABLE_GOTO_CONTRACTOR=Off/' scripts/build.sh \
+    && ./scripts/build.sh -b Release -e OFF
 
-FROM debian:bookworm-slim
-RUN apt-get update && apt-get install -y --no-install-recommends libc6-dev \
+FROM ubuntu:24.04
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y --no-install-recommends libc6-dev ca-certificates curl \
+    && curl -sSL -o /tmp/cbmc.deb https://github.com/diffblue/cbmc/releases/download/cbmc-6.8.0/ubuntu-24.04-cbmc-6.8.0-Linux.deb \
+    && apt-get install -y --no-install-recommends /tmp/cbmc.deb && rm /tmp/cbmc.deb \
     && rm -rf /var/lib/apt/lists/*
 COPY --from=build /src/release /opt/release
 ENV PATH="/opt/release/bin:${PATH}"
@@ -30,5 +36,5 @@ WORKDIR /work
 COPY examples examples
 COPY benchmarks benchmarks
 COPY scripts scripts
-RUN esbmc --version
+RUN esbmc --version && cbmc --version
 CMD ["scripts/smoke.sh"]
