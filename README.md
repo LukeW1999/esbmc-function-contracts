@@ -13,13 +13,14 @@ the paper measures.
 
 ## Try it
 
-Either build the container, which compiles ESBMC `v8.6` from source because
-that tag has no release build yet (about an hour):
+Either build the container, which compiles ESBMC from source at commit
+`199741e8d8` on the `v8.6` line, because that tag still moves and has no
+release build (about an hour):
 
     docker build -t esbmc-contracts .
     docker run --rm esbmc-contracts
 
-or install ESBMC `v8.6` or newer yourself, put `esbmc` on `PATH`, and run:
+or install ESBMC at that commit or newer yourself, put `esbmc` on `PATH`, and run:
 
     scripts/smoke.sh
 
@@ -58,7 +59,7 @@ same function with one write to an undeclared global.
 | `lean/` | `ContractSoundness.lean`, 237 lines, no `sorry`, `admit` or added `axiom` |
 | `results/` | every measurement the paper reports, one run |
 | `scripts/` | `smoke.sh`, `rerun_all.sh`, `verify_paper.py`, `gen_figures.py` (the data figures, from `results/`) |
-| `Dockerfile` | ESBMC `v8.6` built from source, with the examples and benchmarks on top |
+| `Dockerfile` | ESBMC built from source at `199741e8d8` (v8.6 line), with the examples and benchmarks on top |
 
 Every script takes the binary from `esbmc` on `PATH`, or from `$ESBMC`.
 
