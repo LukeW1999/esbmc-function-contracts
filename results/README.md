@@ -86,3 +86,14 @@ benchmarks. With the rounding mode restored, the pinned commit gives every
 verdict and VCC count in these logs and the times within a few percent on the
 same CPU model. The later `v8.6` line (checked at `199741e8d8`) does not: its
 Enforce harness (#8042) fails the ML-KEM contracts and the M5 mutant.
+
+## The container reproduces these logs
+
+A `docker build` of this tree on 2026-10-15 (Xeon 6982P-C, the CPU model of
+the 2026-09-03 host) followed by `scripts/rerun_all.sh --reps 1` inside the
+container gave the same verdict and VCC count in every row above, and all
+eleven negative controls fired with a `VERIFICATION FAILED` verdict. Its
+`bmc_s` for the cells that take over a second came out between 3% and 7%
+below the Xeon means. The first image lacked `python3` and `bc`, which the
+control scripts and the speedup columns need. Both are in the image now and
+the control scripts refuse to count anything but a failed verdict.

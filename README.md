@@ -42,7 +42,7 @@ Three commands, about two seconds. Expected:
 
     prog.c  --enforce-contract           62 VCC, 14 properties, SUCCESSFUL
     bad.c   --enforce-contract           assigns compliance: c:@g_other ... FAILED
-    prog.c  --replace-call-with-contract  4 VCC,  4 properties, SUCCESSFUL
+    prog.c  --replace-call-with-contract  4 VCC,  3 properties, SUCCESSFUL
 
 `examples/prog.c` is the annotated function the paper lists, and `bad.c` is the
 same function with one write to an undeclared global.
