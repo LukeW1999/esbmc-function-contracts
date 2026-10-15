@@ -11,8 +11,9 @@ __CPROVER_assigns(g)
 __CPROVER_ensures(g == 42)
 {
     g = 42;
-    h = 99;  /* temporary write to h */
-    h = 0;   /* restore h to original value */
+    int t = h;  /* temporary write to h, restored to the value found */
+    h = 99;
+    h = t;
 }
 
 int main(void) { foo(); }

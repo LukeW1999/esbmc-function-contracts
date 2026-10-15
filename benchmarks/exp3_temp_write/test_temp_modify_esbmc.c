@@ -1,6 +1,6 @@
 /* Soundness boundary test: temporary modification then restore
  *
- * foo() temporarily sets h = 99, then restores h = 0.
+ * foo() temporarily sets h = 99, then restores the value it found.
  * Assigns clause only declares g.
  *
  * ESBMC (black-box/observational): PASS — h == 0 at function exit
@@ -20,8 +20,9 @@ void foo(void)
     __ESBMC_ensures(g == 42);
 
     g = 42;
-    h = 99;  /* temporary write to h */
-    h = 0;   /* restore h to original value */
+    int t = h;  /* temporary write to h, restored to the value found */
+    h = 99;
+    h = t;
 }
 
 int main(void)

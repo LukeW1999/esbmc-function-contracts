@@ -49,7 +49,7 @@ int compute(int *arr, int n, int lo, int hi)
   g_other = 1;                 /* M3: write OUTSIDE assigns clause */
 #endif
 #if MUT==5
-  g_other = 99; g_other = 0;   /* M5: temporary write, restored before exit */
+  { int t = g_other; g_other = 99; g_other = t; }  /* M5: temporary write, restored before exit */
 #endif
 #if MUT==1
   return sum + n;              /* M1: can exceed n*hi (upper-bound bug) */

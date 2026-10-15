@@ -84,8 +84,23 @@ memory on the Direct columns. That is the FPU rounding mode the ibex library
 leaves upward (ESBMC #8043, fixed upstream in #8045), not a property of the
 benchmarks. With the rounding mode restored, the pinned commit gives every
 verdict and VCC count in these logs and the times within a few percent on the
-same CPU model. The later `v8.6` line (checked at `199741e8d8`) does not: its
-Enforce harness (#8042) fails the ML-KEM contracts and the M5 mutant.
+same CPU model.
+
+The `v8.6` line and later (checked at `199741e8d8` and at master
+`720d15eb60`) do not reproduce two logs as committed, and neither is an
+ESBMC bug. Since #8042 (2026-09-30) the Enforce harness gives a struct
+pointer parameter a nondeterministic extent, as #6484 did for other
+pointers, and prints a warning naming the parameter. `poly_reduce.c` then
+needs `__ESBMC_requires(__ESBMC_is_fresh(r, sizeof(*r)))` in place of
+`r != NULL`. On the pinned build that clause raises the Enforce VCC count
+at N=16 from 105 to 174 and the time by about half, so the file stays as it
+was measured and the master form is noted here. Since #7881 (2026-09-17)
+the harness havocs globals before assuming `requires`, and a temporary
+write that restored the constant initialiser, which is what mutant M5 and
+`exp3_temp_write` did, no longer restores the value found. Both now save
+and restore that value. On the pinned build the verdicts and VCC counts in
+`ce_agreement.txt` and `exp3_temp_write/` are unchanged, and on master the
+M5 and `exp3` rows read as the paper states.
 
 ## The container reproduces these logs
 

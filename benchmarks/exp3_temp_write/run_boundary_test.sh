@@ -12,7 +12,7 @@ echo "============================================================"
 echo "Exp3: Soundness Boundary (Observational vs Strict)"
 echo "============================================================"
 echo ""
-echo "Test: foo() writes h=99 then h=0 (restores). Assigns only declares g."
+echo "Test: foo() writes h=99 then restores the value it found. Assigns only declares g."
 echo ""
 
 # === ESBMC ===
@@ -23,7 +23,7 @@ esbmc_result="ERROR"
 echo "$esbmc_out" | grep -q "VERIFICATION SUCCESSFUL" && esbmc_result="PASS"
 echo "$esbmc_out" | grep -q "VERIFICATION FAILED" && esbmc_result="FAIL"
 echo "  Result: $esbmc_result"
-echo "  (h == 0 at exit, so observational compliance holds)"
+echo "  (h holds its entry value at exit, so observational compliance holds)"
 echo ""
 
 # === CBMC ===
