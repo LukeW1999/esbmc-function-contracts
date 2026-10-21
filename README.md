@@ -54,11 +54,22 @@ Three commands, about two seconds. Expected:
 `examples/prog.c` is the annotated function the paper lists, and `bad.c` is the
 same function with one write to an undeclared global.
 
+`examples/descend.c` is a recursive function under a depth bound. Both flags
+on the same function check the recursive call against the contract, so no
+unwinding is needed:
+
+    esbmc examples/descend.c          --enforce-contract descend --replace-call-with-contract descend --function descend
+    esbmc examples/descend.c -DCAPPED --enforce-contract descend --replace-call-with-contract descend --function descend
+
+Expected: 1 VCC each; the first fails at `contract requires` on the recursive
+call because nothing in the body owns the bound, the second, with the guard,
+is SUCCESSFUL.
+
 ## Layout
 
 | Path | What |
 |---|---|
-| `examples/` | the annotated function and its frame-violating twin |
+| `examples/` | the annotated function, its frame-violating twin and a bounded recursive function |
 | `benchmarks/mlkem/` | `poly_reduce`, `poly_add`, `poly_tomont`, with contracts; `poly_reduce_cbmc.c` is the CBMC arm |
 | `benchmarks/x509/` | the ANSSI parser functions, plain and contracted, the propagation harness and the controls |
 | `benchmarks/freertos/heap1/` | `heap_1` with contracts, and the harness |
